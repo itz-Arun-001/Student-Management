@@ -1,0 +1,7 @@
+# Binaries
+*.exe
+*.o
+*.obj
+
+# Text database (optional sample or auto-generated)
+students.txt
