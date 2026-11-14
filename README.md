@@ -4,7 +4,6 @@ A menu-driven **C++ console application** to store, manage and analyse student a
 
 ![Language](https://img.shields.io/badge/language-C%2B%2B-blue)
 ![Type](https://img.shields.io/badge/type-console%20app-lightgrey)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 
@@ -15,30 +14,30 @@ A menu-driven **C++ console application** to store, manage and analyse student a
 - [Getting Started](#getting-started)
 - [How to Use](#how-to-use)
 - [How It Works](#how-it-works)
+- [Program Flow](#program-flow)
 - [Code Structure](#code-structure)
 - [Customisation](#customisation)
 - [Limitations and Future Improvements](#limitations-and-future-improvements)
 - [Concepts Practised](#concepts-practised)
 - [Contributing](#contributing)
-- [License](#license)
 - [Author](#author)
 
 ---
 
 ## Features
 
-| # | Menu option | Description |
-|---|-------------|-------------|
-| 1 | **Add student** | Add a record with roll number, name and marks in 5 subjects. Duplicate roll numbers are rejected. |
-| 2 | **View all students** | Shows every record in a table with total, average, grade and PASS/FAIL. |
-| 3 | **Search by roll number** | Prints a full report card for one student. |
-| 4 | **Update student** | Edit the name and marks of an existing record. |
-| 5 | **Delete student** | Remove a record, with a confirmation prompt. |
-| 6 | **Search by name** | Partial and case-insensitive (typing `arun` finds `Arun S` and `Arun Raj`). |
-| 7 | **Rank list** | Students sorted by total marks, highest first. Equal totals share the same rank. |
-| 8 | **Class statistics** | Class average, highest and lowest total, pass count and percentage, grade distribution. |
-| 9 | **Subject-wise toppers** | Shows who scored the highest in each subject. |
-| 10 | **Exit** | Closes the program (data is already saved). |
+| #   | Menu option               | Description                                                                                       |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1   | **Add student**           | Add a record with roll number, name and marks in 5 subjects. Duplicate roll numbers are rejected. |
+| 2   | **View all students**     | Shows every record in a table with total, average, grade and PASS/FAIL.                           |
+| 3   | **Search by roll number** | Prints a full report card for one student.                                                        |
+| 4   | **Update student**        | Edit the name and marks of an existing record.                                                    |
+| 5   | **Delete student**        | Remove a record, with a confirmation prompt.                                                      |
+| 6   | **Search by name**        | Partial and case-insensitive (typing `arun` finds `Arun S` and `Arun Raj`).                       |
+| 7   | **Rank list**             | Students sorted by total marks, highest first. Equal totals share the same rank.                  |
+| 8   | **Class statistics**      | Class average, highest and lowest total, pass count and percentage, grade distribution.           |
+| 9   | **Subject-wise toppers**  | Shows who scored the highest in each subject.                                                     |
+| 10  | **Exit**                  | Closes the program (data is already saved).                                                       |
 
 **Other highlights**
 
@@ -167,7 +166,6 @@ Subject 5 : Meena (90)
    ```
 
 3. **Run**
-
    - Linux / macOS: `./srms`
    - Windows: `srms.exe`
 
@@ -219,14 +217,14 @@ struct Student {
 
 Grade is based on the **average** of the 5 subject marks.
 
-| Average | Grade |
-|---------|-------|
-| 90 and above | O |
-| 80 - 89.99 | A |
-| 70 - 79.99 | B |
-| 60 - 69.99 | C |
-| 50 - 59.99 | D |
-| Below 50 | F |
+| Average      | Grade |
+| ------------ | ----- |
+| 90 and above | O     |
+| 80 - 89.99   | A     |
+| 70 - 79.99   | B     |
+| 60 - 69.99   | C     |
+| 50 - 59.99   | D     |
+| Below 50     | F     |
 
 ### Pass / Fail rule
 
@@ -252,6 +250,101 @@ Spaces in names are replaced with `_` while saving (so one line always equals on
 
 ---
 
+## Program Flow
+
+The diagrams below render automatically on GitHub.
+
+### 1. Overall program flow
+
+```mermaid
+flowchart TD
+    A([Start]) --> B[Load records from students.txt]
+    B --> C[/Show menu/]
+    C --> D[/Read choice 1-10<br/>repeat until valid/]
+    D --> E{Choice?}
+
+    E -->|1| F[Add student]
+    E -->|2| G[View all students]
+    E -->|3| H[Search by roll number<br/>show report card]
+    E -->|4| I[Update student]
+    E -->|5| J[Delete student]
+    E -->|6| K[Search by name]
+    E -->|7| L[Rank list]
+    E -->|8| M[Class statistics]
+    E -->|9| N[Subject-wise toppers]
+    E -->|10| O([Print Goodbye and exit])
+
+    F --> C
+    G --> C
+    H --> C
+    I --> C
+    J --> C
+    K --> C
+    L --> C
+    M --> C
+    N --> C
+```
+
+### 2. Add student flow
+
+```mermaid
+flowchart TD
+    A([Add student]) --> B[/Enter roll number/]
+    B --> C{Roll number<br/>already exists?}
+    C -->|Yes| D[Show error message]
+    D --> Z([Back to menu])
+    C -->|No| E[/Enter name<br/>spaces become underscores/]
+    E --> F[/Enter marks for 5 subjects<br/>each must be 0-100/]
+    F --> G[Add record to vector]
+    G --> H[Save all records to students.txt]
+    H --> I[Show success message]
+    I --> Z
+```
+
+### 3. Input validation flow (`readInt`)
+
+```mermaid
+flowchart TD
+    A([readInt called]) --> B[/Show prompt and read number/]
+    B --> C{Is it a number<br/>within the allowed range?}
+    C -->|Yes| D[Clear leftover input]
+    D --> E([Return the value])
+    C -->|No| F[Show Invalid input]
+    F --> G[Reset cin error state<br/>and discard bad input]
+    G --> B
+```
+
+### 4. Result evaluation flow
+
+```mermaid
+flowchart TD
+    A([Student marks]) --> B[Total = sum of 5 subjects]
+    B --> C[Average = Total / 5]
+    C --> D{Average?}
+    D -->|90 or more| E[Grade O]
+    D -->|80 to 89.99| F[Grade A]
+    D -->|70 to 79.99| G[Grade B]
+    D -->|60 to 69.99| H[Grade C]
+    D -->|50 to 59.99| I[Grade D]
+    D -->|below 50| J[Grade F]
+
+    A --> K{Every subject<br/>mark is 40 or more?}
+    K -->|Yes| L[Result: PASS]
+    K -->|No| M[Result: FAIL]
+```
+
+### 5. Data flow (file storage)
+
+```mermaid
+flowchart LR
+    A[(students.txt)] -->|loadFromFile at start| B[vector of Student<br/>in memory]
+    B -->|add / update / delete| B
+    B -->|saveToFile after every change| A
+    B --> C[View, search, rank,<br/>statistics, toppers]
+```
+
+---
+
 ## Code Structure
 
 ```
@@ -263,33 +356,33 @@ Spaces in names are replaced with `_` while saving (so one line always equals on
 
 ### Main functions
 
-| Function | Purpose |
-|----------|---------|
-| `totalMarks`, `average`, `grade`, `hasPassed` | Calculation helpers for one student |
-| `readInt` | Reads a whole number in a range; repeats on invalid input |
-| `readName` | Reads a full name (with spaces) and converts spaces to `_` |
-| `toLower`, `displayName` | String helpers for searching and display |
-| `findIndex` | Finds a student by roll number, returns `-1` if not found |
-| `saveToFile`, `loadFromFile` | Read and write `students.txt` |
-| `printHeader`, `printRow` | Formatted table output |
-| `addStudent`, `viewAll`, `viewOne`, `updateStudent`, `deleteStudent` | Core record operations |
-| `searchByName` | Partial, case-insensitive name search |
-| `showRankList` | Sorted ranking using `sort` with a lambda |
-| `showStatistics` | Class average, highest/lowest, pass percentage, grade counts |
-| `showSubjectToppers` | Highest scorer in each subject |
-| `main` | Loads data, shows the menu in a loop, calls the selected function |
+| Function                                                             | Purpose                                                           |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `totalMarks`, `average`, `grade`, `hasPassed`                        | Calculation helpers for one student                               |
+| `readInt`                                                            | Reads a whole number in a range; repeats on invalid input         |
+| `readName`                                                           | Reads a full name (with spaces) and converts spaces to `_`        |
+| `toLower`, `displayName`                                             | String helpers for searching and display                          |
+| `findIndex`                                                          | Finds a student by roll number, returns `-1` if not found         |
+| `saveToFile`, `loadFromFile`                                         | Read and write `students.txt`                                     |
+| `printHeader`, `printRow`                                            | Formatted table output                                            |
+| `addStudent`, `viewAll`, `viewOne`, `updateStudent`, `deleteStudent` | Core record operations                                            |
+| `searchByName`                                                       | Partial, case-insensitive name search                             |
+| `showRankList`                                                       | Sorted ranking using `sort` with a lambda                         |
+| `showStatistics`                                                     | Class average, highest/lowest, pass percentage, grade counts      |
+| `showSubjectToppers`                                                 | Highest scorer in each subject                                    |
+| `main`                                                               | Loads data, shows the menu in a loop, calls the selected function |
 
 ---
 
 ## Customisation
 
-| What you want to change | Where |
-|-------------------------|-------|
-| Number of subjects | `SUBJECTS` constant and the `sub[]` array |
-| Subject names (for example Maths, Physics) | `sub[]` array at the top of the file |
-| Pass mark | `PASS_MARK` constant |
-| Grade cutoffs | `grade()` function |
-| Storage file name | `FILE_NAME` constant |
+| What you want to change                    | Where                                     |
+| ------------------------------------------ | ----------------------------------------- |
+| Number of subjects                         | `SUBJECTS` constant and the `sub[]` array |
+| Subject names (for example Maths, Physics) | `sub[]` array at the top of the file      |
+| Pass mark                                  | `PASS_MARK` constant                      |
+| Grade cutoffs                              | `grade()` function                        |
+| Storage file name                          | `FILE_NAME` constant                      |
 
 ---
 
@@ -335,12 +428,6 @@ Suggestions and improvements are welcome.
 3. Commit your changes: `git commit -m "Add your feature"`
 4. Push the branch: `git push origin feature/your-feature`
 5. Open a pull request
-
----
-
-## License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
